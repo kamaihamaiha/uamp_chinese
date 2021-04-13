@@ -1,0 +1,64 @@
+apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'kotlin-android-extensions'
+
+android {
+    compileSdkVersion rootProject.compileSdkVersion
+
+    defaultConfig {
+        versionCode 1
+        versionName "1.0"
+
+        minSdkVersion rootProject.minSdkVersion
+        targetSdkVersion rootProject.targetSdkVersion
+
+        testOptions.unitTests.includeAndroidResources = true
+        testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        targetCompatibility = '1.8'
+    }
+
+}
+
+dependencies {
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlin_coroutines_version"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlin_coroutines_version"
+
+    api "androidx.media:media:$androidx_media_version"
+
+    api "com.google.code.gson:gson:$gson_version"
+
+    // ExoPlayer 依赖
+
+    // 这里允许 UAMP 使用一个本地版本的 ExoPlayer, 该版本对于扩展 MediaSession 的扩展很有用，也可以用于测试和自定义
+    // 如果包含 ":exoplayer-library-core"项目，那也假定其他也包含在内
+    if (findProject(':exoplayer-library-core') != null) {
+        api project(':exoplayer-library-core')
+        api project(':exoplayer-library-ui')
+        api project(':exoplayer-extension-mediasession')
+        api project(':exoplayer-extension-cast')
+    } else {
+        api "com.google.android.exoplayer:exoplayer-core:$exoplayer_version"
+        api "com.google.android.exoplayer:exoplayer-ui:$exoplayer_version"
+        api "com.google.android.exoplayer:extension-mediasession:$exoplayer_version"
+        api "com.google.android.exoplayer:extension-cast:$exoplayer_version"
+    }
+
+    // Glide 依赖
+    api "com.github.bumptech.glide:glide:$glide_version"
+    kapt "com.github.bumptech.glide:compiler:$glide_version"
+
+    // 测试
+    testImplementation "junit:junit:$junit_version"
+    testImplementation "org.robolectric:robolectric:$robolectric_version"
+}
